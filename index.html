@@ -11,13 +11,21 @@
 <body>
   <main class="app" id="app" v-cloak>
     <h1 class="app__title">Vue.js Todo List</h1>
+    <div class="todo__filter">
+      <input
+        class="todo__field"
+        type="search"
+        v-model="query"
+        placeholder="Search todo item..."
+      />
+    </div>
     <section>
       <div class="message message--info v-cloak--visible">
         Let me load your todos...
       </div>
       <div
         class="message message--info v-cloak--hidden"
-        v-if="todos.length === 0"
+        v-if="filteredList.length === 0"
       >
         This list is empty.
       </div>
@@ -31,7 +39,7 @@
         @leave="leave"
       >
         <li
-          v-for="(item, i) in todos"
+          v-for="(item, i) in filteredList"
           :key="item.id"
           :data-index="i"
           :class="{'todo__item': true, 'todo__item--done': item.done}"

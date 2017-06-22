@@ -1,6 +1,7 @@
 const app = new Vue({
   el: '#app',
   data: {
+    query: null,
     todos: [{
       id: Math.random(),
       task: 'Learn Vue.js',
@@ -45,5 +46,12 @@ const app = new Vue({
     removeTodo: function(id) {
       this.todos = this.todos.filter(r => r.id !== id);
     },
+  },
+  computed: {
+    filteredList: function() {
+      if (!this.query) { return this.todos; }
+      const regex = new RegExp(this.query, 'i');
+      return this.todos.filter(todo => todo.task.match(regex));
+    }
   },
 });
