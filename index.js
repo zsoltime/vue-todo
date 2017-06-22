@@ -1,6 +1,8 @@
 const app = new Vue({
   el: '#app',
   data: {
+    cachedTodo: null,
+    editedTodo: null,
     query: null,
     todos: [{
       id: Math.random(),
@@ -43,8 +45,20 @@ const app = new Vue({
         done();
       }, 300);
     },
-    removeTodo: function(id) {
-      this.todos = this.todos.filter(r => r.id !== id);
+    removeTodo: function(todo) {
+      this.todos = this.todos.filter(r => r.id !== todo.id);
+    },
+    editTodo: function(todo) {
+      this.editedTodo = todo.id;
+      this.cachedTodo = todo.task;
+    },
+    handleEdit: function(todo) {
+      if (!this.editedTodo) { return; }
+      this.editedTodo = null;
+    },
+    cancelEdit: function(todo) {
+      this.editedTodo = null;
+      todo.task = this.cachedTodo;
     },
   },
   computed: {
@@ -53,5 +67,12 @@ const app = new Vue({
       const regex = new RegExp(this.query, 'i');
       return this.todos.filter(todo => todo.task.match(regex));
     }
+  },
+  directives: {
+    focus: function(el, binding) {
+      if (binding.value) {
+        el.focus();
+      }
+    },
   },
 });
