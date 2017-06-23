@@ -1,30 +1,69 @@
+const TodoStorage = {
+  get: function() {
+    const strItems = localStorage.getItem('zsVueTodos');
+    let items;
+
+    try {
+      items = JSON.parse(strItems);
+    } catch (e) {
+      console.error(e.message);
+    }
+
+    return Array.isArray(items) ? items : [];
+  },
+  set: function(updatedItems) {
+    if (Array.isArray(updatedItems)) {
+      localStorage.setItem('zsVueTodos', JSON.stringify(updatedItems));
+      return updatedItems;
+    }
+    return undefined;
+  },
+  wipe: function() {
+    localStorage.removeItem('zsVueTodos');
+  },
+};
+
+const defaultTodos = [{
+  id: Math.random(),
+  task: 'Learn Vue.js',
+  done: false,
+}, {
+  id: Math.random(),
+  task: 'Learn Vuex',
+  done: false,
+}, {
+  id: Math.random(),
+  task: 'Learn ES6',
+  done: true,
+}, {
+  id: Math.random(),
+  task: 'Finish this todo app',
+  done: true,
+}, {
+  id: Math.random(),
+  task: 'Make other awesome apps',
+  done: false,
+}];
+
 const app = new Vue({
   el: '#app',
   data: {
     cachedTodo: null,
     editedTodo: null,
     query: null,
-    todos: [{
-      id: Math.random(),
-      task: 'Learn Vue.js',
-      done: false,
-    }, {
-      id: Math.random(),
-      task: 'Learn Vuex',
-      done: false,
-    }, {
-      id: Math.random(),
-      task: 'Learn ES6',
-      done: true,
-    }, {
-      id: Math.random(),
-      task: 'Finish this todo app',
-      done: true,
-    }, {
-      id: Math.random(),
-      task: 'Make other awesome apps',
-      done: false,
-    }],
+    todos: [],
+  },
+  mounted: function() {
+    const todos = TodoStorage.get();
+    this.todos = todos.length ? todos : defaultTodos;
+  },
+  watch: {
+    todos: {
+      deep: true,
+      handler: function(val) {
+        TodoStorage.set(val);
+      }
+    },
   },
   methods: {
     beforeEnter: function(el) {
